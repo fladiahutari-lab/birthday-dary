@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dery Satria Dermawan - Private Access</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1e1e2e 0%, #2a2a3e 50%, #3a3a5a 100%);
+            position: relative;
+        }
+
+        /* Subtle Background Waves */
+        .bg-wave {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 50%;
+            background: linear-gradient(to top, rgba(100,150,255,0.1) 0%, transparent 50%);
+            animation: waveBg 25s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        .bg-wave:nth-child(2) {
+            animation-direction: reverse;
+            animation-duration: 30s;
+            opacity: 0.6;
+        }
+
+        @keyframes waveBg {
+            0%, 100% { transform: translateX(0) scaleY(1); }
+            50% { transform: translateX(-25%) scaleY(1.05); }
+        }
+
+        /* Login Page - Smooth Transition */
+        .login-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            backdrop-filter: blur(15px);
+            background: rgba(0,0,0,0.6);
+            opacity: 1;
+            transform: scale(1);
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .login-container.hide {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+
+        .login-box {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 20px;
+            padding: 40px 35px;
+            width: 360px;
+            text-align: center;
+            box-shadow: 
+                0 20px 40px rgba(0,0,0,0.4),
+                0 0 0 1px rgba(255,255,255,0.1);
+            animation: floatGentle 6s ease-in-out infinite;
+        }
+
+        @keyframes floatGentle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .login-title {
+            color: #e8e8ff;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            background: rgba(255,255,255,0.1);
+            color: #e8e8ff;
+            font-size: 15px;
+            font-weight: 400;
+            outline: none;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .input-field::placeholder {
+            color: rgba(232,232,255,0.6);
+        }
+
+        .input-field:focus {
+            border-color: rgba(120,150,255,0.6);
+            background: rgba(255,255,255,0.15);
+            box-shadow: 0 0 20px rgba(120,150,255,0.2);
+            transform: translateY(-1px);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .login-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102,126,234,0.4);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .error-msg {
+            color: #ff8a80;
+            font-size: 13px;
+            margin-top: 12px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Main App - Smooth Entry */
+        .main-app {
+            display: none;
+            height: 100vh;
+            position: relative;
+            z-index: 10;
+            opacity: 0;
+            transform: scale(0.95);
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .main-app.show {
+            opacity: 1;
+            transform: scale(1);
+            display: block !important;
+        }
+
+        /* Elegant Slides - Slide Down */
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transform: translateY(-100%);
+            transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slide.prev {
+            transform: translateY(100%);
+        }
+
+        /* Content Cards - Elegant & Compact */
+        .content-card {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 20px;
+            padding: 45px 35px;
+            max-width: 550px;
+            text-align: center;
+            box-shadow: 
+                0 20px 40px rgba(0,0,0,0.3),
+                0 0 0 1px rgba(255,255,255,0.08);
+        }
+
+        .card-title {
+            font-size: 32px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #e8e8ff, #c0c0ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        .card-text {
+            color: #d4d4ff;
+            font-size: 16px;
+            line-height: 1.7;
+            margin-bottom: 25px;
+            font-weight: 400;
+        }
+
+        .text-luxury {
+            color: #ffd700;
+            font-weight: 500;
+            font-size: 17px;
+            margin-top: 15px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        /* Gift Box - Elegant Size */
+        .gift-container {
+            perspective: 800px;
+            margin-bottom: 30px;
+        }
+
+        .gift-box {
+            width: 220px;
+            height: 220px;
+            position: relative;
+            transform-style: preserve-3d;
+            cursor: pointer;
+            transition: all 1.2s ease;
+        }
+
+        .gift-box.open {
+            transform: rotateX(-180deg) translateY(-30px);
+        }
+
+        .gift-lid {
+            position: absolute;
+            top: 0;
+            width: 220px;
+            height: 110px;
+            background: linear-gradient(145deg, #ffd700, #ffed4e);
+            border-radius: 12px 12px 0 0;
+            box-shadow: 0 8px 20px rgba(255,215,0,0.4);
+        }
+
+        .gift-body {
+            position: absolute;
+            bottom: 0;
+            width: 220px;
+            height: 110px;
+            background: linear-gradient(145deg, #daa520, #b8860b);
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 8px 20px rgba(218,165,32,0.4);
+        }
+
+        .birthday-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e1e2e;
+            text-align: center;
+            opacity: 0;
+            animation: bounceIn 1s ease forwards 0.8s;
+            line-height: 1.3;
+        }
+
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+
+        /* Letter - Elegant Size */
+        .letter-container {
+            perspective: 1000px;
+            margin-top: 20px;
+        }
+
+        .letter {
+            width: 280px;
+            height: 380px;
+            position: relative;
+            transform-style: preserve-3d;
+            cursor: pointer;
+            transition: all 1s ease;
+        }
+
+        .letter:hover:not(.open) {
+            transform: rotateY(8deg) scale(1.02);
+        }
+
+        .letter.open {
+            transform: rotateY(-180deg);
+        }
+
+        .letter-face {
+            position: absolute;
+            width: 280px;
+            height: 380px;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .letter-front {
+            background: linear-gradient(145deg, #667eea, #764ba2);
+        }
+
+        .letter-back {
+            background: rgba(30,30,46,0.95);
+            transform: rotateY(180deg);
+            padding: 30px;
+            color: #e8e8ff;
+        }
+
+        .impian-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #e8e8ff;
+            text-align: center;
+        }
+
+        .impian-textarea {
+            width: 100%;
+            height: 220px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            padding: 15px;
+            color: #e8e8ff;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            resize: none;
+            outline: none;
+        }
+
+        .impian-textarea::placeholder {
+            color: rgba(232,232,255,0.6);
+        }
+
+        .btn-save {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+
+        /* Navigation - Minimal Elegant */
+        .nav-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(102,126,234,0.4);
+            transition: all 0.3s ease;
+            z-index: 50;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transform: scale(0);
+            animation: fadeInUp 0.8s ease forwards 1s;
+        }
+
+        .nav-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 25px rgba(102,126,234,0.5);
+        }
+
+        .music-btn {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            color: #e8e8ff;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            z-index: 50;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            opacity: 0;
+            transform: scale(0);
+            animation: fadeInUp 0.8s ease forwards 0.8s;
+        }
+
+        .music-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.1);
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Waves -->
+    <div class="bg-wave" style="animation-delay: 0s;"></div>
+    <div class="bg-wave" style="animation-delay: -15s;"></div>
+
+    <!-- Login Page -->
+    <div class="login-container" id="loginPage">
+        <div class="login-box">
+            <h1 class="login-title">Private Access</h1>
+            <div class="input-group">
+                <input type="text" class="input-field" id="username" placeholder="Username" autocomplete="off">
+            </div>
+            <div class="input-group">
+                <input type="password" class="input-field" id="password" placeholder="Password" autocomplete="off">
+            </div>
+            <button class="login-btn" id="loginBtn" onclick="checkLogin()">Enter</button>
+            <div class="error-msg" id="errorMsg">Username atau Password salah</div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div class="main-app" id="mainApp">
+        <!-- Slide 1: Gift -->
+        <div class="slide active" data-slide="1">
+            <div class="gift-container">
+                <div class="gift-box" id="giftBox" ="openGift()">
+                    <div class="gift-lid"></div>
+                    <div class="gift-body"></div>
+                    <div class="birthday-text">
+                        Happy Birthday<br>
+                        Dery Satria<br>
+                        Dermawan
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Doa -->
+        <div class="slide" data-slide="2">
+            <div class="content-card">
+                <h1 class="card-title">🤲 Doa</h1>
+                <p class="card-text">
+                    ya allah limpahkan rahmat-Mu kepada Dery Satria Dermawan seperti lautan yang tak bertepi. 
+                    Berkahilah usianya, sehatkan jiwanya, mudahkan langkahnya.
+                </p>
+                <p class="text-luxury">
+                    Setiap ombak harapan membawanya menuju pantai kesuksesan. Aamiin Yaa Rabbal Alamin.
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 3: Semangat -->
+        <div class="slide" data-slide="3">
+            <div class="content-card">
+                <h1 class="card-title">💪 Semangat</h1>
+                <p class="card-text">
+                    Dery, jadilah nahkoda yang tak kenal menyerah! Hadapi badai kehidupan dengan dada lapang dan keyakinan penuh.
+                </p>
+                <p class="text-luxury">
+                    Impianmu adalah samudra luas - tak ada batasnya. Berlayar menuju kejayaan dengan penuh keberanian!
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 4: Letter -->
+        <div class="slide" data-slide="4">
+            <div class="content-card">
+                <h1 class="card-title">✍️ Impian</h1>
+                <div class="letter-container">
+                    <div class="letter" id="letter" onclick="toggleLetter()">
+                        <div class="letter-face letter-front"></div>
+                        <div class="letter-face letter-back">
+                            <div class="impian-title">Impian & Harapan</div>
+                            <textarea class="impian-textarea" id="impianText" placeholder="Tuliskan impian, keinginan, atau keluh kesahmu..."></textarea>
+                            <button class="btn-save" onclick="saveLetter(event)">Simpan</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <button class="nav-btn" onclick="nextSlide()">↓</button>
+
+    <script>
+        // Login Credentials
+        const CORRECT_USERNAME = 'Dery satria dermawan';
+        const CORRECT_PASSWORD = 'orang sukses';
+
+        function checkLogin() {
+            const username = document.getElementById('username').value.trim().toLowerCase();
+            const password = document.getElementById('password').value.trim().toLowerCase();
+            const errorMsg = document.getElementById('errorMsg');
+            const loginBtn = document.getElementById('loginBtn');
+            const loginPage = document.getElementById('loginPage');
+            const mainApp = document.getElementById('mainApp');
+
+            if (username === CORRECT_USERNAME.toLowerCase() && password === CORRECT_PASSWORD.toLowerCase()) {
+                // Disable button dan mulai transisi smooth
+                loginBtn.disabled = true;
+                loginBtn.textContent = 'Memuat...';
+                
+                // Hide login page dengan smooth animation
+                loginPage.classList.add('hide');
+                
+                // Show main app setelah transisi selesai
+                setTimeout(() => {
+                    loginPage.style.display = 'none';
+                    mainApp.classList.add('show');
+                }, 600);
+                
+            } else {
+                // Error handling
+                errorMsg.style.opacity = '1';
+                document.querySelector('.login-box').style.animation = 'none';
+                setTimeout(() => {
+                    document.querySelector('.login-box').style.animation = 'shake 0.5s ease-in-out';
+                }, 10);
+                
+                setTimeout(() => {
+                    errorMsg.style.opacity = '0';
+                    document.getElementById('username').value = '';
+                    document.getElementById('password').value = '';
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = 'Enter';
+                }, 2000);
+            }
+        }
+
+        // Slide Navigation
+        let currentSlide = 1;
+        const totalSlides = 4;
+
+        function nextSlide() {
+            const slides = document.querySelectorAll('.slide');
+            slides[currentSlide - 1].classList.remove('active');
+            slides[currentSlide - 1].classList.add('prev');
+
+            currentSlide = currentSlide === totalSlides ? 1 : currentSlide + 1;
+            slides[currentSlide - 1].classList.remove('prev');
+            slides[currentSlide - 1].classList.add('active');
+        }
+
+        function openGift() {
+            document.getElementById('giftBox').classList.add('open');
+            setTimeout(nextSlide, 2500);
+        }
+
+        // Letter Functions
+        let letterOpen = false;
+        let savedText = localStorage.getItem('deryImpian') || '';
+
+        function toggleLetter() {
+            document.getElementById('letter').classList.toggle('open');
+            letterOpen = !letterOpen;
+        }
+
+        function saveLetter(event) {
+            event.stopPropagation();
+            savedText = document.getElementById('impianText').value;
+            localStorage.setItem('deryImpian', savedText);
+            document.getElementById('letter').classList.remove('open');
+            letterOpen = false;
+        }
+
+        // Simple Music
+        let isPlaying = false;
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        function toggleMusic() {
+            if (!isPlaying) {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = 220;
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 3);
+                
+                oscillator.start();
+                setTimeout(() => oscillator.stop(), 3000);
+          
+            }
+        }
+
+        // Keyboard Support
+        document.addEventListener('keydown', function(e) {
+            if (document.getElementById('loginPage').style.display !== 'none') {
+                if (e.key === 'Enter') {
+                    checkLogin();
+                }
+            } else {
+                if (e.key === 'ArrowDown') {
+                    nextSlide();
+                }
+            }
+        });
+
+        // Load saved text
+        if (savedText) {
+            document.getElementById('impianText').value = savedText;
+        }
+
+        // Auto slide every 8 seconds (skip letter)
+        setInterval(() => {
+            if (currentSlide !== 4 && document.getElementById('mainApp').classList.contains('show')) {
+                nextSlide();
+            }
+        }, 8000);
+    </script>
+
+    <style>
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+    </style>
+</body>
+</html>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
